@@ -1,5 +1,6 @@
-tensorflow
+tensorflow-cpu
 scikit-learn
 pillow
 streamlit
 numpy
+pip>=25.1.1
