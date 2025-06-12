@@ -2,7 +2,6 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-from utils.predict_tflite import predict_tflite_image
 
 @st.cache_resource
 def load_tflite_model():
