@@ -1,6 +1,5 @@
-pip
 streamlit
-tensorflow-cpu
-Pillow
+tensorflow
 numpy
-
+pandas 
+Pillow
