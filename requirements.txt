@@ -1,5 +1,6 @@
-streamlit
-tensorflow
+fastapi
+uvicorn[standard]
 numpy
-pandas 
-Pillow
+pillow
+tensorflow
+python-multipart
