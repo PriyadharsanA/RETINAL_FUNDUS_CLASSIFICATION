@@ -1,45 +1,35 @@
-import streamlit as st
-import numpy as np
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.efficientnet import preprocess_input
 from PIL import Image
-import tensorflow as tf
+import numpy as np
+import io
 
-@st.cache_resource
-def load_tflite_model():
-    interpreter = tf.lite.Interpreter(model_path="models/retinal_fundus.tflite")
-    interpreter.allocate_tensors()
-    return interpreter
+app = FastAPI()
 
-interpreter = load_tflite_model()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
-st.title("Fundus Disease Classifier (EfficientNet-B3 - TFLite)")
+model = load_model("app/eye_disease_model.h5")
+class_names = ['Normal','Mild DR','Moderate DR','Possible Glaucoma','Optic atrophy','Branch Retinal Vein Occlusion','Retinal Artery Occlusion','Rhegmatogenous Retinal Detachment','Maculopathy','Epiretinal Membrane','Macular Hole','Pathological Myopia'] 
+IMG_SIZE = 380
 
-uploaded_file = st.file_uploader("Upload a fundus image", type=["jpg", "jpeg", "png"])
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
+    image = Image.open(io.BytesIO(await file.read())).convert("RGB")
+    image = image.resize((IMG_SIZE, IMG_SIZE))
+    image_array = np.array(image)
+    image_array = preprocess_input(image_array)
+    image_array = np.expand_dims(image_array, axis=0)
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    predictions = model.predict(image_array)
+    pred_index = np.argmax(predictions[0])
+    pred_class = class_names[pred_index]
+    confidence = float(np.max(predictions[0]))
 
-    if st.button("Predict"):
-        predicted_class = predict_tflite_image(image, interpreter)
-        st.success(f"Predicted Class: {predicted_class}")
-
-# Set your image size (EfficientNetB3 default input)
-IMAGE_SIZE = 380
-
-def preprocess_image(image: Image.Image) -> np.ndarray:
-    image = image.resize((IMAGE_SIZE, IMAGE_SIZE))
-    image_array = np.array(image).astype(np.float32) / 255.0
-    return np.expand_dims(image_array, axis=0)  # Shape: (1, 380, 380, 3)
-
-def predict_tflite_image(image: Image.Image, interpreter) -> int:
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    input_data = preprocess_image(image)
-
-    interpreter.set_tensor(input_details[0]['index'], input_data)
-    interpreter.invoke()
-
-    output_data = interpreter.get_tensor(output_details[0]['index'])
-    predicted_class = np.argmax(output_data)
-    return predicted_class
+    return {"prediction": pred_class, "confidence": confidence}
