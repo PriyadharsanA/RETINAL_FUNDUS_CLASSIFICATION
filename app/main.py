@@ -18,7 +18,6 @@ class_labels = ['0.0.Normal','0.3.DR1','1.0.DR2','10.0.Possible glaucoma','10.1.
 
 # Preprocessing
 def preprocess_image(image_file):
-    def preprocess_image(image_file):
     image = Image.open(image_file).convert('RGB')
     image = image.resize((380, 380))
 
