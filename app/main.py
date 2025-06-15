@@ -14,12 +14,13 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 # Define class labels
-class_labels = ['Diabetic Retinopathy', 'AMD', 'Glaucoma', 'Hypertensive Retinopathy']
+class_labels = ['0.0.Normal','0.3.DR1','1.0.DR2','10.0.Possible glaucoma','10.1.Optic atrophy','2.0.BRVO','3.RAO','4.Rhegmatogenous RD', '6.Maculopathy','7.ERM','8.MH','9.Pathological myopia']
 
 # Preprocessing
 def preprocess_image(image_file):
     image = Image.open(image_file).convert('RGB')
     image = image.resize((380,380))  # Change size if needed
+    img = np.array(image, dtype=np.float32
     img = preprocess_input(image)
     img = np.expand_dims(img, axis=0)
     return img, image
