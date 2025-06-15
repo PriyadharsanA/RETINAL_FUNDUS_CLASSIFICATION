@@ -18,13 +18,22 @@ class_labels = ['0.0.Normal','0.3.DR1','1.0.DR2','10.0.Possible glaucoma','10.1.
 
 # Preprocessing
 def preprocess_image(image_file):
+    def preprocess_image(image_file):
     image = Image.open(image_file).convert('RGB')
-    image = image.resize((380,380))  # Change size if needed
-    img = np.array(image).astype(np.float32)
-    img = preprocess_input(image)
-    img = np.expand_dims(img, axis=0)
-    return img, image
+    image = image.resize((380, 380))
 
+    # ✅ Convert to NumPy array and float32
+    img = np.array(image).astype(np.float32)
+
+    # ✅ EfficientNetB3 preprocessing (scales & centers)
+    img = preprocess_input(img)
+
+    # ✅ Add batch dimension
+    img = np.expand_dims(img, axis=0)
+
+    return img, image
+img_array, pil_image = preprocess_image(uploaded_file)
+st.write("Your image dtype:", img_array.dtype)  # Must now show float32 ✅
 # Streamlit app
 st.set_page_config(page_title="TFLite Eye Disease Classifier")
 st.title("🧠 Eye Disease Classification (TFLite)")
