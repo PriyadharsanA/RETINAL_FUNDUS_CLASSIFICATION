@@ -38,6 +38,10 @@ if uploaded_file:
     img_array, pil_image = preprocess_image(uploaded_file)
 
     # Set tensor and run inference
+    st.write("Expected shape:", input_details[0]['shape'])
+    st.write("Expected dtype:", input_details[0]['dtype'])
+    st.write("Your image shape:", img_array.shape)
+    st.write("Your image dtype:", img_array.dtype)
     interpreter.set_tensor(input_details[0]['index'], img_array)
     interpreter.invoke()
     prediction = interpreter.get_tensor(output_details[0]['index'])[0]
