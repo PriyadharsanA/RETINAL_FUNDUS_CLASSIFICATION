@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.applications.efficientnet import preprocess_input
 from PIL import Image
 import io
 
@@ -18,8 +19,8 @@ class_labels = ['Diabetic Retinopathy', 'AMD', 'Glaucoma', 'Hypertensive Retinop
 # Preprocessing
 def preprocess_image(image_file):
     image = Image.open(image_file).convert('RGB')
-    image = image.resize((224, 224))  # Change size if needed
-    img = np.array(image, dtype=np.float32) / 255.0
+    image = image.resize((380,380))  # Change size if needed
+    img = preprocess_input(image)
     img = np.expand_dims(img, axis=0)
     return img, image
 
