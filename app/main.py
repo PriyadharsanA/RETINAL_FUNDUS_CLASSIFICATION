@@ -6,7 +6,7 @@ from PIL import Image
 import io
 
 # Load TFLite model
-interpreter = tf.lite.Interpreter(model_path="models/retinal_fundus (1).tflite")
+interpreter = tf.lite.Interpreter(model_path="models/retinal_fundus (2).tflite")
 interpreter.allocate_tensors()
 
 # Get input and output tensors
