@@ -32,8 +32,6 @@ def preprocess_image(image_file):
     img = np.expand_dims(img, axis=0)
 
     return img, image
-img_array, pil_image = preprocess_image(uploaded_file)
-st.write("Your image dtype:", img_array.dtype)  # Must now show float32 ✅
 # Streamlit app
 st.set_page_config(page_title="TFLite Eye Disease Classifier")
 st.title("🧠 Eye Disease Classification (TFLite)")
@@ -44,7 +42,9 @@ uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
+
     img_array, pil_image = preprocess_image(uploaded_file)
+    st.write("Your image dtype:", img_array.dtype)  # Must now show float32 ✅
 
     # Set tensor and run inference
     st.write("Expected shape:", input_details[0]['shape'])
